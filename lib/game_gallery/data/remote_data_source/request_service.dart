@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:http/http.dart' as http;
 import 'package:portofolio_flutter/game_gallery/data/exceptions/exceptions.dart';
 
@@ -25,9 +27,12 @@ class RequestService implements RequestMethod {
       Map<String, dynamic>? body,
       Map<String, String>? headers}) async {
     http.Response response;
+    if(headers != null && headers.isNotEmpty){
+      headers[_jsonHeaders.keys.first] = _jsonHeaders.values.first;
+    }
     headers ??= _jsonHeaders;
     try {
-      Uri uri = Uri.parse(url +"?key="+API_KEY);
+      Uri uri = Uri.parse(url + "?key=" + API_KEY);
       switch (requestType) {
         case RequestType.post:
           response = await client.post(uri, body: body, headers: headers);
@@ -42,10 +47,12 @@ class RequestService implements RequestMethod {
       }
 
       return response;
-
     } catch (exception) {
       if (exception is HTTPRequestException) {
         rethrow;
+      }
+      if (exception is SocketException) {
+        throw NOInternetException();
       }
       throw OTHERRequestException();
     }

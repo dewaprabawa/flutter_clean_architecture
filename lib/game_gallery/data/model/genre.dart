@@ -1,7 +1,13 @@
 
 import 'dart:convert';
 
-Genre genreFromJson(String str) => Genre.fromJson(json.decode(str));
+import 'dart:developer';
+
+List<Genre> genreFromJson(String str){
+  Map<String,dynamic> map = json.decode(str);
+  log(map.toString());
+  return List<Genre>.from(map["results"].map((x) => Genre.fromJson(x)));
+}
 
 class Genre {
     Genre({
@@ -22,9 +28,9 @@ class Genre {
 
     factory Genre.fromJson(Map<String, dynamic> json) => Genre(
         id: json["id"],
-        name: json["name"],
-        slug: json["slug"],
-        gamesCount: json["games_count"],
+        name: json["name"] ?? "Unknown",
+        slug: json["slug"] ?? "Unknown",
+        gamesCount: json["games_count"] ?? 0,
         imageBackground: json["image_background"],
         games: List<Game>.from(json["games"].map((x) => Game.fromJson(x))),
     );
@@ -45,9 +51,9 @@ class Game {
 
     factory Game.fromJson(Map<String, dynamic> json) => Game(
         id: json["id"],
-        slug: json["slug"],
-        name: json["name"],
-        added: json["added"],
+        slug: json["slug"] ?? "Unknown",
+        name: json["name"] ?? "Unknown",
+        added: json["added"] ?? "Unknown",
     );
 
     Map<String, dynamic> toJson() => {
